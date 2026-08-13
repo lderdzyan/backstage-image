@@ -1,0 +1,56 @@
+name: Build and Push Backstage to ACR
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+env:
+  ACR_NAME: ${{ secrets.ACR_NAME }}     
+  IMAGE: backstage
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Type check
+        run: yarn tsc
+
+      - name: Build backend
+        run: yarn build:backend
+      - name: Sign in to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+
+      - name: ACR login
+        run: az acr login --name "$ACR_NAME"
+
+      - name: Set image tag
+        id: vars
+        run: echo "sha_tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        run: |
+          docker build -f packages/backend/Dockerfile -t "${ACR_NAME}.azurecr.io/${IMAGE}:latest" .
+
+      - name: Push Docker image
+        run: |
+          docker push "${ACR_NAME}.azurecr.io/${IMAGE}:latest"
+          docker push "${ACR_NAME}.azurecr.io/${IMAGE}:${{ steps.vars.outputs.sha_tag }}"

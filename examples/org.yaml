@@ -1,0 +1,31 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  description: Platform Engineering Team
+spec:
+  type: team
+  children: []
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: lucy
+  description: Backstage Administrator
+spec:
+  memberOf:
+    - platform-team
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: bob
+  description: Platform Team Member
+spec:
+  memberOf:
+    - platform-team
+

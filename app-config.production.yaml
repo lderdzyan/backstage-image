@@ -1,0 +1,64 @@
+app:
+  baseUrl: https://backstage-demo.westus3.cloudapp.azure.com
+
+organization:
+  name: My Org
+
+backend:
+  baseUrl: https://backstage-demo.westus3.cloudapp.azure.com
+  listen:
+    port: 7007
+  cors:
+    origin: [https://backstage-demo.westus3.cloudapp.azure.com]
+
+csp:
+  upgrade-insecure-requests: false
+
+auth:
+  environment: production
+  providers:
+    microsoft:
+      production:
+        clientId: ${AZURE_CLIENT_ID}
+        clientSecret: ${AZURE_CLIENT_SECRET}
+        tenantId: ${AZURE_TENANT_ID}
+
+database:
+  client: pg
+  connection:
+    host: ${POSTGRES_HOST}
+    port: ${POSTGRES_PORT}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    ssl:
+      require: true
+      rejectUnauthorized: false
+
+integrations:
+  github:
+    - host: github.com
+      token: ${GITHUB_TOKEN}
+
+catalog:
+  providers:
+    microsoftGraphOrg:
+      default:
+        target: https://graph.microsoft.com/v1.0
+        authority: https://login.microsoftonline.com
+        tenantId: ${AZURE_TENANT_ID}
+        clientId: ${AZURE_CLIENT_ID}
+        clientSecret: ${AZURE_CLIENT_SECRET}
+        user:
+          filter: accountEnabled eq true
+        group:
+          filter: securityEnabled eq true
+        schedule:
+          frequency: { hours: 1 }
+          timeout: { minutes: 50 }
+          initialDelay: { seconds: 15 }
+
+  locations:
+    - type: url
+      target: https://github.com/lderdzyan/azure-function-software-template/blob/main/template.yaml
+      rules:
+        - allow: [Template]
