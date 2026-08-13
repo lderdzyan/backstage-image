@@ -24,7 +24,8 @@ auth:
         tenantId: ${AZURE_TENANT_ID}
         signIn:
           resolvers:
-            - resolver: userPrincipalNameMatchingUserEntityAnnotation
+            - resolver: emailMatchingUserEntityProfileEmail
+              dangerouslyAllowSignInWithoutUserInCatalog: true
 
 database:
   client: pg
