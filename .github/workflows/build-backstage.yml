@@ -55,4 +55,3 @@ jobs:
       - name: Push Docker image
         run: |
           docker push "${ACR_NAME}.azurecr.io/${IMAGE}:latest"
-          docker push "${ACR_NAME}.azurecr.io/${IMAGE}:${{ steps.vars.outputs.sha_tag }}"
