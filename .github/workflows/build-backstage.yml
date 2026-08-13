@@ -9,6 +9,10 @@ env:
   ACR_NAME: ${{ secrets.ACR_NAME }}     
   IMAGE: backstage
 
+permissions:
+  contents: read
+  id-token: write
+  
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
