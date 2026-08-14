@@ -76,10 +76,8 @@ catalog:
         - allow: [Group, User]
   
 techdocs:
-  builder: 'external'
+  builder: 'local'
+  generator:
+    runIn: 'local'
   publisher:
-    type: 'azureBlobStorage'
-    azureBlobStorage:
-      containerName: 'techdocs'
-      credentials:
-        accountName: ${AZURE_STORAGE_ACCOUNT_NAME}
+    type: 'local'
