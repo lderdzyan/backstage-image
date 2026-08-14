@@ -66,3 +66,15 @@ catalog:
       target: https://github.com/lderdzyan/azure-function-software-template/blob/main/template.yaml
       rules:
         - allow: [Template]
+  
+techdocs:
+  builder: 'external'
+  publisher:
+    type: 'azureBlobStorage'
+    azureBlobStorage:
+      containerName: 'techdocs'
+      accountName: ${AZURE_STORAGE_ACCOUNT_NAME}
+      credentials:
+        clientId: ${AZURE_CLIENT_ID}
+        clientSecret: ${AZURE_CLIENT_SECRET}
+        tenantId: ${AZURE_TENANT_ID}
