@@ -13,6 +13,8 @@ backend:
     port: 7007
   cors:
     origin: [https://backstage-demo.westus3.cloudapp.azure.com]
+  csp:
+    upgrade-insecure-requests: false
   database:
     client: pg
     connection:
@@ -23,8 +25,7 @@ backend:
       ssl:
         rejectUnauthorized: false
 
-csp:
-  upgrade-insecure-requests: false
+
 
 auth:
   environment: production
@@ -80,8 +81,5 @@ techdocs:
     type: 'azureBlobStorage'
     azureBlobStorage:
       containerName: 'techdocs'
-      accountName: ${AZURE_STORAGE_ACCOUNT_NAME}
       credentials:
-        clientId: ${AZURE_CLIENT_ID}
-        clientSecret: ${AZURE_CLIENT_SECRET}
-        tenantId: ${AZURE_TENANT_ID}
+        accountName: ${AZURE_STORAGE_ACCOUNT_NAME}
