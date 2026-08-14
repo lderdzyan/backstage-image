@@ -67,11 +67,11 @@ catalog:
 
   locations:
     - type: url
-      target: https://github.com/lderdzyan/azure-function-software-template/blob/main/template.yaml
+      target: https://github.com/babkenasoyanorg/azure-function-software-template/blob/main/template.yaml
       rules:
         - allow: [Template]
     - type: url
-      target: https://github.com/lderdzyan/azure-function-software-template/blob/main/org.yaml
+      target: https://github.com/babkenasoyanorg/azure-function-software-template/blob/main/org.yaml
       rules:
         - allow: [Group, User]
   
