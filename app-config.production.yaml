@@ -1,5 +1,5 @@
 app:
-  baseUrl: https://backstage-demo.westus3.cloudapp.azure.com
+  baseUrl: https://backstage-demo.cloudchipr.dev
 
 organization:
   name: Demo 
@@ -8,11 +8,11 @@ permission:
   enabled: true
 
 backend:
-  baseUrl: https://backstage-demo.westus3.cloudapp.azure.com
+  baseUrl: https://backstage-demo.cloudchipr.dev
   listen:
     port: 7007
   cors:
-    origin: [https://backstage-demo.westus3.cloudapp.azure.com]
+    origin: [https://backstage-demo.cloudchipr.dev]
   csp:
     upgrade-insecure-requests: false
   database:
