@@ -1,5 +1,15 @@
-import { AuthorizeResult, PolicyDecision } from '@backstage/plugin-permission-common';
-import { PermissionPolicy, PolicyQuery, PolicyQueryUser } from '@backstage/plugin-permission-node';
+
+import { createBackendModule } from '@backstage/backend-plugin-api';
+import {
+  AuthorizeResult,
+  PolicyDecision,
+} from '@backstage/plugin-permission-common';
+import {
+  PermissionPolicy,
+  PolicyQuery,
+  PolicyQueryUser,
+} from '@backstage/plugin-permission-node';
+import { policyExtensionPoint } from '@backstage/plugin-permission-node/alpha';
 import { catalogEntityDeletePermission } from '@backstage/plugin-catalog-common/alpha';
 
 export class GroupPermissionPolicy implements PermissionPolicy {
@@ -7,31 +17,39 @@ export class GroupPermissionPolicy implements PermissionPolicy {
     request: PolicyQuery,
     user?: PolicyQueryUser,
   ): Promise<PolicyDecision> {
-    // Extract ownership entity references from PolicyQueryUser
-    const userGroups = user?.info.ownershipEntityRefs || [];
+    const userGroups = user?.info.ownershipEntityRefs ?? [];
 
-    const isPlatformAdmin = userGroups.includes('group:default/platform-engineering');
-    const isDeveloper = userGroups.includes('group:default/developers');
+    const isPlatformAdmin = userGroups.includes(
+      'group:default/platform-engineering',
+    );
 
-    // 1. Platform Engineering -> Full Admin Access
-    if (isPlatformAdmin) {
-      return { result: AuthorizeResult.ALLOW };
-    }
+    const isDeletePermission =
+      request.permission.name === catalogEntityDeletePermission.name;
 
-    // 2. Developers -> Restricted Access
-    if (isDeveloper) {
-      // Prevent developers from unregistering/deleting entities from Catalog
-      if (request.permission.name === catalogEntityDeletePermission.name) {
-        return { result: AuthorizeResult.DENY };
-      }
-      return { result: AuthorizeResult.ALLOW };
-    }
-
-    // 3. Fallback Policy for Users in neither group
-    if (request.permission.name === catalogEntityDeletePermission.name) {
-      return { result: AuthorizeResult.DENY };
+    // Only Platform Engineering can unregister/delete catalog entities
+    if (isDeletePermission) {
+      return {
+        result: isPlatformAdmin
+          ? AuthorizeResult.ALLOW
+          : AuthorizeResult.DENY,
+      };
     }
 
     return { result: AuthorizeResult.ALLOW };
   }
 }
+
+export default createBackendModule({
+  pluginId: 'permission',
+  moduleId: 'group-permission-policy',
+  register(reg) {
+    reg.registerInit({
+      deps: {
+        policy: policyExtensionPoint,
+      },
+      async init({ policy }) {
+        policy.setPolicy(new GroupPermissionPolicy());
+      },
+    });
+  },
+});
